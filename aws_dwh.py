@@ -59,6 +59,10 @@ def create_iam_role(iam,DWH_IAM_ROLE_NAME):
         
 def attach_get_role(iam,DWH_IAM_ROLE_NAME):
     """Attach role to iam policy 
+    
+       Args: iam - IAM client
+             DWH_IAM_ROLE_NAME - data warehouse role name
+             
        Return: IAM role ARN
     """
     
@@ -109,7 +113,10 @@ def create_redshift_cluster(redshift,
         print(e)
 
 def prettyRedshiftProps(props):
-    """Get the status of the cluster"""
+    """Get the status of the cluster
+       Args: props: properties of the cluster
+       Return dataframe of describing the properties of the cluster
+    """
     
     pd.set_option('display.max_colwidth', -1)
     keysToShow = ["ClusterIdentifier", "NodeType", "ClusterStatus", "MasterUsername", "DBName", "Endpoint", "NumberOfNodes", 'VpcId']
@@ -118,7 +125,14 @@ def prettyRedshiftProps(props):
 
 
 def delete_cluster(redshift,iam,DWH_CLUSTER_IDENTIFIER,DWH_IAM_ROLE_NAME):
-    """Clean up by deleting cluster, to prevent accumulation of cost when not in use"""
+    """Clean up by deleting cluster, to prevent accumulation of cost when not in use
+       
+       Args: redshift - aws redshift client
+             iam - aws IAM client
+             DWH_CLUSTER_IDENTIFIER - cluster identifier
+             DWH_IAM_ROLE_NAME - IAM role name
+      Return: None
+    """
     
     redshift.delete_cluster( ClusterIdentifier=DWH_CLUSTER_IDENTIFIER,  SkipFinalClusterSnapshot=True)
     iam.detach_role_policy(RoleName=DWH_IAM_ROLE_NAME, PolicyArn="arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess")
@@ -129,7 +143,12 @@ def delete_cluster(redshift,iam,DWH_CLUSTER_IDENTIFIER,DWH_IAM_ROLE_NAME):
 
 
 def access_cluster_endpoint(ec2,myClusterProps,DWH_PORT):
-    """Open an incoming TCP port to access the cluster ednpoint"""
+    """Open an incoming TCP port to access the cluster ednpoint
+       Args: ec2 - EC2 cleint
+             myClusterProps - dataframe of cluster properties
+             DWH_PORT - datawarehouse port
+       Return: None
+    """
     print(myClusterProps['VpcId'])
     try:
         vpc = ec2.Vpc(id=myClusterProps['VpcId'])

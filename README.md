@@ -64,3 +64,47 @@ In the first step, we wish to copy the data from two directories of JSON formatt
 With regards to creating the analytics tables, we firstly create the songs table from the staging_songs table, using 'SELECT DISTINCT' statements to avoid duplicates in the songs. We do the same for artists, and users respectively, once again using a 'SELECT DISTINCT' statement to avoid duplication. To create the songplays analytics tables, select from the staging_events table, joining artists and songs tables to retrieve the song_ids and artists_ids. We filter the insert statement by the entries for which page is equal to 'NextSong'. We create the time table from the songplays. we use the 'extract' function, to extract the particular part of the datetime object, and the 'timestamp' function to convert the epoch timestamp to a datetime object.
 
 The ETL pipeline is such that the script will load all events from the json files into staging tables, and subsequently into analytics tables, such that the sparkify analytics team can produce valuable insights into user listening behaviour.
+
+
+## How to Run this Project
+
+- Create an IAM user credentials on AWS console
+
+- Enter the credential info and the cluster configurations in the aws_conf.cfg and dwh.cfg files.
+
+- Create the Redshift cluster by running the aws_dwh.py file in your either your terminal or notebook:
+   ```
+   Notebook
+   %run aws_dwh.py
+   ```
+
+- Create tables by running create_tables.py:
+   ```
+   Notebook
+   %run create_tables.py
+   ```
+
+- Execute ETL process by running etl.py:
+   ```
+   Notebook
+   %run etl.py
+   ```
+- Remember to delete the cluster when you are done as this will incur charges overnight  
+
+
+ ## Project Files
+ 
+ - aws_conf.cfg - Aws configrations and cluster information for creating the cluster
+ 
+ - aws_dwh.py - Python Script for for creating the redshift cluster
+ 
+ - create_tables.py - Python Script for creating tables from the queries
+ 
+ - dwh.cfg - Aws configuration for connecting to the cluster
+ 
+ - etl.py - Python Script for executing the ETL pipeline
+ 
+ - sql_queries.py - Python Script containing all queries to be executed on the cluster
+ 
+ - test.ipynb - Notebook for testing the pipeline
+ 
